@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+// Check if the user is logged in and is a provider
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'provider') {
+    header("Location: Login_provider.php"); // Redirect to login if not logged in or not a provider
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -102,7 +111,7 @@
 
   <img src="Images/Job.png" alt="Logo" style="width: 800px; height: 500px; margin: 10px auto; display: flex; position: fixed; top:23%; left: 50%; transform: translateX(-50%); z-index: -1;">
   <div class="button">
-    <a href="ProviderForm.html" style="text-decoration: none; color: white; background-color: #3515c3; padding: 15px 25px; border-radius: 5px; font-size: 20px; align-items: center;margin-top: 560px; display: inline-block;left: 600px; position: fixed;">Post Job</a>
+    <a href="ProviderForm.php" style="text-decoration: none; color: white; background-color: #3515c3; padding: 15px 25px; border-radius: 5px; font-size: 20px; align-items: center;margin-top: 560px; display: inline-block;left: 600px; position: fixed;">Post Job</a>
   </div>
 </body>
 </html>
