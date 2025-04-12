@@ -1,3 +1,50 @@
+<?php
+session_start();
+include_once 'db_connect.php';
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+    $password = $_POST['password'];
+
+    if ($email && $password) {
+        $stmt = $conn->prepare("SELECT id, first_name, last_name, password, role FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows === 1) {
+            $stmt->bind_result($id, $first_name, $last_name, $hashed_password, $role);
+            $stmt->fetch();
+
+            // DEBUG: Uncomment the next line to see what is retrieved
+            // echo "Role from DB: $role, Password match: " . (password_verify($password, $hashed_password) ? "Yes" : "No");
+
+            if ($role === 'provider') {
+                if (password_verify($password, $hashed_password)) {
+                    $_SESSION['user_id'] = $id;
+                    $_SESSION['first_name'] = $first_name;
+                    $_SESSION['role'] = $role;
+                    header("Location: Job-Provider.php");
+                    exit();
+                } else {
+                    echo "❌ Incorrect password.";
+                }
+            } else {
+                echo "❌ You are not a provider. Please use the seeker login.";
+            }
+        } else {
+            echo "❌ No user found with that email.";
+        }
+
+        $stmt->close();
+    } else {
+        echo "❌ Please enter both email and password.";
+    }
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -100,7 +147,7 @@
 <body>
   <div class="container">
     <h2>Login</h2>
-    <form action="Job-Provider.html">
+    <form action="" method="POST">
       <label for="email">Email</label>
       <input type="email" id="email" name="email" placeholder="Enter your email" required>
 
@@ -109,7 +156,7 @@
 
       <button type="submit">Submit</button>
     </form>
-    <p class="register-link">Don't have an account? <a href="register.html">Register</a></p>
+    <p class="register-link">Don't have an account? <a href="register.php">Register</a></p>
   </div>
 </body>
 </html>
