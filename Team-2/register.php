@@ -1,3 +1,39 @@
+<?php
+include_once 'db_connect.php'; // Assumes db_connect.php has your DB credentials
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Get and sanitize form data
+    $first_name = filter_input(INPUT_POST, 'first_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $last_name = filter_input(INPUT_POST, 'last_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+    $password = password_hash($_POST['password'],PASSWORD_DEFAULT); // hash password
+    $role = filter_input(INPUT_POST, 'job_role', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+    // Simple validation
+    if ($first_name && $last_name && $email && $password && ($role === 'provider' || $role === 'seeker')) {
+        // Prepare SQL
+        $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, password, role) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssss", $first_name, $last_name, $email, $password, $role);
+
+        if ($stmt->execute()) {
+            // Redirect based on role
+            if ($role === 'provider') {
+                header("Location: login_provider.php");
+            } elseif ($role === 'seeker') {
+                header("Location: login_seeker.php");
+            }
+            exit(); // Ensure no further code is executed
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+
+        $stmt->close();
+    } else {
+        echo "Please fill all fields correctly.";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -120,15 +156,14 @@
 <body>
   <div class="container">
     <h3>Register</h3>
-    <form id="register-form"action="#" method="POST">
-      <div class="row">
+    <form id="register-form" action="#" method="POST">
+              <div class="row">
         <div class="col">
           <label for="first-name">First Name</label>
-          <input type="text" id="first-name" name="first-name" placeholder="First Name" required>
-        </div>
+          <input type="text" id="first-name" name="first_name" placeholder="First Name" required>        </div>
         <div class="col">
           <label for="last-name">Last Name</label>
-          <input type="text" id="last-name" name="last-name" placeholder="Last Name" required>
+<input type="text" id="last-name" name="last_name" placeholder="Last Name" required>
         </div>
       </div>
 
@@ -146,7 +181,7 @@
       <div class="row">
         <div class="col">
           <label for="job-role">Role</label>
-          <select id="job-role" name="job-role" required>
+          <select id="job-role" name="job_role" required>
             <option value="" disabled selected>Select your role</option>
             <option value="provider">Provider</option>
             <option value="seeker">Seeker</option>
@@ -158,25 +193,11 @@
 
       <p class="login-link">
         Already have an account?<br>
-         <a href="login_provider.html">Login as job provider</a><br>
-         <a href="login_seeker.html">Login as job seeker</a>
+         <a href="login_provider.php">Login as job provider</a><br>
+         <a href="login_seeker.php">Login as job seeker</a>
       </p>
     </form>
-    <script>
-      document.getElementById('register-form').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission
     
-        const role = document.getElementById('job-role').value;
-    
-        if (role === 'provider') {
-          window.location.href = "login_provider.html"; // Redirect to provider page
-        } else if (role === 'seeker') {
-          window.location.href = "login_seeker.html"; // Redirect to seeker page
-        } else {
-          alert('Please select a valid role.');
-        }
-      });
-    </script>
   </div>
 </body>
 </html>
