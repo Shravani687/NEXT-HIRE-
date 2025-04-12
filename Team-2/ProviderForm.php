@@ -1,3 +1,38 @@
+<?php
+session_start();
+include_once 'db_connect.php'; // Include database connection
+
+// Check if the user is logged in and is a provider
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'provider') {
+    header("Location: Login_provider.php"); // Redirect to login if not logged in or not a provider
+    exit();
+}
+
+// Handle form submission
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $job_title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $company_name = filter_input(INPUT_POST, 'company', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $job_description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $location = filter_input(INPUT_POST, 'location', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+
+    if ($job_title && $company_name && $job_description && $location && $email) {
+        // Insert job posting into the database
+        $stmt = $conn->prepare("INSERT INTO job_postings (job_title, company_name, job_description, location, email, provider_id) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssi", $job_title, $company_name, $job_description, $location, $email, $_SESSION['user_id']);
+
+        if ($stmt->execute()) {
+            echo "<script>alert('Job posted successfully!');</script>";
+        } else {
+            echo "<script>alert('Error: " . $stmt->error . "');</script>";
+        }
+
+        $stmt->close();
+    } else {
+        echo "<script>alert('Please fill all fields correctly.');</script>";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -134,13 +169,7 @@
             background-color: #0056b3;
         }
     </style>
-      <script>
-        function submitForm(event) {
-            event.preventDefault(); // Prevents form from refreshing the page
-            alert("Job posted successfully!"); // Success message popup
-            document.getElementById("jobForm").reset(); // Clears the form fields
-        }
-    </script>
+      
 </head>
 <body>
 
@@ -159,8 +188,8 @@
   <img src="Images/provider.png" alt="Logo" style="width: 1500px; height: 600px; margin: 10px auto; display: flexbox; position: fixed; top:11%; left: 50%; transform: translateX(-50%); z-index: -1;">
   <div class="form-container">
     <h1>Job Opening</h1>
-    <form id="jobForm" onsubmit="submitForm(event)">
-        <div class="form-group">
+    <form id="jobForm" action="submit_job.php" method="POST">
+    <div class="form-group">
             <label for="title">Job Title:</label>
             <input type="text" id="title" name="title" required>
         </div>
