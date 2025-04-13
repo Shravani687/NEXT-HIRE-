@@ -28,8 +28,11 @@ $result = $conn->query($sql);
             
             flex-direction: column;
             align-items: center;
+        background-image: url("Images/lock3.png");      
+        
+            background-size: cover;
+            background-position: center;
         }
-
         .job-card {
             background: #fff;
             border: 1px solid #ddd;
@@ -84,7 +87,7 @@ $result = $conn->query($sql);
             echo "<p><strong>Description:</strong> " . nl2br(htmlspecialchars($row["description"])) . "</p>";
             echo "<p><strong>Location:</strong> " . htmlspecialchars($row["location"]) . "</p>";
             echo "<p class='email'><strong>Contact:</strong> " . htmlspecialchars($row["email"]) . "</p>";
-            echo "<a class='apply-btn' href='apply.php?job_id=" . urlencode($row["id"]) . "'>Apply Job</a>";
+            echo "<a class='apply-btn' href='detail.php?job_id=" . urlencode($row["id"]) . "'>Apply Job</a>";
             echo "</div>";
         }
     } else {
@@ -94,6 +97,5 @@ $result = $conn->query($sql);
     $conn->close();
     ?>
 
-    <img src="Images/provider.png" alt="Logo" style="width: 1800px; height: 700px; margin: 10px auto; display: flexbox; position: fixed; top:11%; left: 50%; transform: translateX(-50%); z-index: -1;">
 </body>
 </html>
