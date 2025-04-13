@@ -24,7 +24,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $_SESSION['user_id'] = $id;
                     $_SESSION['first_name'] = $first_name;
                     $_SESSION['role'] = $role;
-                    header("Location: Job-Provider.php");
+                    $_SESSION['email'] = $email;
+                    header("Location: Job-provider.php");
                     exit();
                 } else {
                     echo "❌ Incorrect password.";
