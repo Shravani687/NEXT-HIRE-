@@ -111,7 +111,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'provider') {
 
   <img src="Images/Job.png" alt="Logo" style="width: 800px; height: 500px; margin: 10px auto; display: flex; position: fixed; top:23%; left: 50%; transform: translateX(-50%); z-index: -1;">
   <div class="button">
-    <a href="ProviderForm.php" style="text-decoration: none; color: white; background-color: #3515c3; padding: 15px 25px; border-radius: 5px; font-size: 20px; align-items: center;margin-top: 560px; display: inline-block;left: 600px; position: fixed;">Post Job</a>
+    <a href="ProviderForm.php" style="text-decoration: none; color: white; background-color: #3515c3; padding: 15px 25px; border-radius: 5px; font-size: 20px; align-items: center;margin-top: 640px; display: inline-block;left: 550px; position: fixed;">Post Job</a>
+    <a href="provider_dashboard.php" style="text-decoration: none; color: white; background-color: #3515c3; padding: 15px 25px; border-radius: 5px; font-size: 20px; margin: left 100px; ;margin-top: 640px; display: inline-block;left: 750px; position: fixed;">View Applicatios</a>
+
   </div>
 </body>
 </html>
